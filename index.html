@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#bcdff2" />
+<meta name="description" content="A little interactive gift for Nei — a Nihongo quiz, a confession, and 100 things." />
+<title>こんにちは、Nei ♡</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' font-size='24' text-anchor='middle'%3E%F0%9F%A9%B5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Quicksand:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Noto+Serif+JP:wght@400;500;600&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ambient background layers, present throughout the whole experience -->
+  <div class="ambient" aria-hidden="true">
+    <div class="sky-wash"></div>
+    <div class="petal-field" id="petalField"></div>
+    <div class="glow-cursor" id="glowCursor"></div>
+  </div>
+
+  <!-- music widget -->
+  <div class="music-widget" id="musicWidget">
+    <button class="music-toggle" id="musicToggle" type="button" aria-label="Play music">
+      <span class="music-icon">♪</span>
+    </button>
+    <div class="music-panel">
+      <p class="music-title">P.Y.T. — Michael Jackson</p>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" aria-label="Volume" />
+      <p class="music-note" id="musicNote">tap ♪ to play</p>
+    </div>
+  </div>
+  <audio id="bgm" src="pyt.mp3" loop preload="none"></audio>
+
+  <main id="app">
+
+    <!-- ================= SCENE 1 — LANDING ================= -->
+    <section class="scene scene-active" id="scene-landing" data-scene="landing">
+      <div class="scene-inner landing-inner">
+        <div class="deco deco-hydrangea deco-tl" aria-hidden="true">
+          <span class="hydrangea"></span>
+        </div>
+        <div class="deco deco-hydrangea deco-br" aria-hidden="true">
+          <span class="hydrangea small"></span>
+        </div>
+        <div class="butterfly bf-1" aria-hidden="true">
+          <svg viewBox="0 0 40 30" width="30" height="22">
+            <path d="M20 15 C10 -5 -5 5 5 18 C10 24 18 20 20 15Z" fill="#9fcdea"/>
+            <path d="M20 15 C30 -5 45 5 35 18 C30 24 22 20 20 15Z" fill="#bcdff2"/>
+            <line x1="20" y1="6" x2="20" y2="24" stroke="#5b93c7" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="butterfly bf-2" aria-hidden="true">
+          <svg viewBox="0 0 40 30" width="22" height="16">
+            <path d="M20 15 C10 -5 -5 5 5 18 C10 24 18 20 20 15Z" fill="#79b1db"/>
+            <path d="M20 15 C30 -5 45 5 35 18 C30 24 22 20 20 15Z" fill="#9fcdea"/>
+            <line x1="20" y1="6" x2="20" y2="24" stroke="#3f74ab" stroke-width="2"/>
+          </svg>
+        </div>
+
+        <div class="note-tag note-tag-a">nihongo time ✦</div>
+        <div class="note-tag note-tag-b">gambatte, Nei ♡</div>
+
+        <figure class="character-float character-miffy-float">
+          <img src="miffy.png" alt="Miffy" width="320" height="320" loading="eager" />
+        </figure>
+        <figure class="character-float character-bmo-float">
+          <img src="bmo.png" alt="BMO" width="320" height="282" loading="lazy" />
+        </figure>
+        <figure class="character-float character-spidey-float">
+          <img src="spiderman.png" alt="Spider-Man" width="320" height="318" loading="lazy" />
+        </figure>
+
+        <div class="landing-copy">
+          <p class="jp-lead">こんにちは、Nei ♡</p>
+          <p class="lead-sub">A little something I made for you.</p>
+          <p class="lead-sub tiny">Before anything else… I have a tiny quiz for you :)</p>
+          <button class="btn-primary" id="startBtn" type="button">
+            はじめましょう <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 2 — QUIZ ================= -->
+    <section class="scene" id="scene-quiz" data-scene="quiz">
+      <div class="scene-inner quiz-inner">
+        <div class="deco deco-leaf deco-quiz-a" aria-hidden="true"></div>
+        <div class="deco deco-leaf deco-quiz-b" aria-hidden="true"></div>
+
+        <p class="scene-kicker">にほんご ミニクイズ</p>
+        <p class="quiz-progress" id="quizProgress">01 / 10</p>
+
+        <div class="quiz-card" id="quizCard">
+          <p class="quiz-question" id="quizQuestion"></p>
+          <div class="quiz-options" id="quizOptions"></div>
+        </div>
+
+        <div class="quiz-nav">
+          <button class="btn-ghost" id="quizBack" type="button">← back</button>
+          <div class="quiz-dots" id="quizDots"></div>
+          <button class="btn-primary small" id="quizNext" type="button" disabled>next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 3 — YOU MADE IT ================= -->
+    <section class="scene" id="scene-madeit" data-scene="madeit">
+      <div class="scene-inner madeit-inner">
+        <div class="deco deco-hydrangea deco-center" aria-hidden="true"><span class="hydrangea"></span></div>
+        <p class="jp-lead small">よくできました、Nei ♡</p>
+        <h2 class="scene-title">You made it!</h2>
+        <p class="quiz-result" id="quizResult"></p>
+        <p class="lead-sub">Okay… there's one more thing before the actual reason I made this.</p>
+        <button class="btn-primary" id="continueBtn" type="button">Continue <span class="arrow">→</span></button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 3.5 — THE CHOICE ================= -->
+    <section class="scene" id="scene-choice" data-scene="choice">
+      <div class="scene-inner choice-inner">
+        <div class="deco deco-hydrangea deco-center" aria-hidden="true"><span class="hydrangea small"></span></div>
+        <p class="scene-kicker">wait lang muna, Nei ♡</p>
+        <h2 class="scene-title">Before I show you...</h2>
+        <div class="choice-card">
+          <p class="choice-text">Okay so, the next part gets a little more personal — it's kind of the actual reason I made this whole thing lol. And I don't want you to feel like you have to see it right now, or at all, kung hindi mo talaga type.</p>
+          <p class="choice-text">If it makes you feel unsure or uncomfy in any way, that's honestly so okay. You don't owe me a "yes, show me" just because you got this far.</p>
+          <p class="choice-text choice-emphasis">So— I'm giving you a choice, Nei :) hehe. Fr, it's okay :3</p>
+        </div>
+        <div class="choice-actions">
+          <button class="btn-primary" id="choiceContinueBtn" type="button">okay, show me <span class="arrow">→</span></button>
+          <button class="btn-ghost" id="choicePauseBtn" type="button">not right now, that's okay</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 3.6 — GENTLE PAUSE (opt-out) ================= -->
+    <section class="scene" id="scene-pause" data-scene="pause">
+      <div class="scene-inner pause-inner">
+        <div class="deco deco-hydrangea deco-center" aria-hidden="true"><span class="hydrangea small"></span></div>
+        <p class="jp-lead small">だいじょうぶ、Nei ♡</p>
+        <h2 class="scene-title">That's okay.</h2>
+        <p class="lead-sub">Really, truly okay — no explanation needed, no pressure at all.</p>
+        <p class="lead-sub tiny">I just wanted you to have the choice. I still care about you either way, and I hope you take care of yourself always ♡</p>
+        <button class="btn-ghost" id="pauseBackBtn" type="button">← back to the start</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 4 — CONFESSION ================= -->
+    <section class="scene" id="scene-confession" data-scene="confession">
+      <div class="scene-inner confession-inner">
+        <div class="note-tag note-tag-c">あなたはとても特別です</div>
+        <article class="letter">
+          <div class="letter-seal">♡</div>
+          <p class="reveal-p">Hello, Nei! Ts is so random pero like, I just wanna tell you something that I've been keeping for a while now, and it's something that I feel sayo. So ayun nga, we've been talking na for almost 3 months na?!?! HAHSHAH ang bilis ng time legit. Parang kailan lang nung nagsisimula pa lang tayo mag-usap, tapos ngayon, somehow, naging part ka na ng everyday life ko.</p>
+          <p class="reveal-p">Honestly, hindi ko rin alam exactly paano ko sasabihin 'to without making things awkward HAHAHA, and even though hindi pa tayo masyadong nagkita cuz of the mismatched scheds aUHUAHUAUAUAH pero I feel like I should just say it instead of keeping it to myself. Over these past few months, I've really gotten to know you more, and the more we talk, the more I realize how much I genuinely enjoy having you around. Whether we're talking about random things, nagkukulitan, sharing stories, or even just having those simple conversations, I always find myself looking forward to talking to you.</p>
+          <p class="reveal-p">And I don't know if you've noticed, pero you've slowly become someone who means a lot to me. There are times na something happens during my day and ikaw agad yung naiisip kong kwentuhan about it. Sometimes I even catch myself waiting for your messages or smiling whenever I see your name pop up HAHAHA nakakahiya sabihin pero ayun, it's true MWUHEUHEUH</p>
+          <p class="reveal-p">I really appreciate the time, effort, and energy you give whenever we talk. I appreciate how comfortable I've become around you and how I can just be myself without having to overthink everything. You've made these past three months really special for me, even in ways you probably don't realize.</p>
+          <p class="reveal-p">And I guess what I'm trying to say is… somewhere along the way, I started developing a thing called "feelings" for you, A THING?!?!?! Hindi ko naman exactly alam kung kailan siya nagsimula or kung paano nangyari, pero I just know that what I feel for you is genuine. It's not something I'm saying just because we've been talking for a while. I've actually thought about it a lot, and I realized that I'd rather be honest with you than keep pretending that it's just nothing.</p>
+          <p class="reveal-p">I'm not telling you this because I expect you to immediately give me an answer or anything like that. I don't want you to feel pressured. I just wanted you to know what I genuinely feel because you deserve that honesty. Whatever you feel about it, I'll respect it. I still really value what we have, and I'm grateful that I got the chance to know you this much.</p>
+          <p class="reveal-p">But yeah… ayun HAHAHA. After three months of talking, I finally gathered enough courage to say it. I like you, Nei. AAAAAAA USUHSUHS gurl. I guess I just wanted you to know :).</p>
+          <p class="reveal-p soft-note">If anything, if this message makes you feel a little uncomfy or overwhelmed, okay lang talaga to take your time ha. No pressure, you don’t have to respond right away. I just really wanted to be honest with you about how I feel. And wag ka magkasakit ha 😭 please take care of yourself, and WAG NA MAG-PANCIT CANTON BAGO MATULOG!!! UHAUUAUAHUA. Take care always, Nei : ) 💙</p>
+          <div class="signature reveal-p">
+            <span>ありがとう、可愛い人。</span>
+            <strong>♡</strong>
+          </div>
+        </article>
+        <button class="btn-primary" id="afterLetterBtn" type="button">Continue <span class="arrow">→</span></button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 5 — BEFORE 100 ================= -->
+    <section class="scene" id="scene-before100" data-scene="before100">
+      <div class="scene-inner before100-inner">
+        <div class="deco deco-hydrangea deco-center" aria-hidden="true"><span class="hydrangea small"></span></div>
+        <p class="scene-kicker">a little something for you ♡</p>
+        <h2 class="scene-title">A Little Something for You ♡</h2>
+        <p class="lead-sub">I made one more thing…</p>
+
+        <div class="keepsake-preview">
+          <div class="keepsake-cover">
+            <span class="keepsake-flower">✿ ❀ ✽</span>
+            <span class="keepsake-number">100</span>
+            <span class="keepsake-title">Things<br>I Like<br>About You</span>
+            <span class="keepsake-name">SHANELLE ♡</span>
+            <span class="keepsake-ribbon"></span>
+          </div>
+        </div>
+        <p class="lead-sub tiny">100 Things I Like About You</p>
+        <button class="btn-primary" id="openBookBtn" type="button">Open the 100 Things ♡</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 6 — 100 THINGS BOOK ================= -->
+    <section class="scene" id="scene-book" data-scene="book">
+      <div class="scene-inner book-inner">
+        <p class="scene-kicker">a keepsake, for you to revisit ♡</p>
+        <div class="book" id="book">
+          <div class="book-page" id="bookPage">
+            <div class="page-flower page-flower-tl" aria-hidden="true">❀</div>
+            <div class="page-flower page-flower-br" aria-hidden="true">✿</div>
+            <p class="page-heading" id="pageHeading">100 Things I Like About You</p>
+            <ol class="page-list" id="pageList" start="1"></ol>
+            <p class="page-footnote">for you, always ♡</p>
+          </div>
+        </div>
+        <div class="book-nav">
+          <button class="btn-ghost" id="bookPrev" type="button">← prev page</button>
+          <span class="book-page-count" id="bookPageCount">page 1 / 10</span>
+          <button class="btn-ghost" id="bookNext" type="button">next page →</button>
+        </div>
+        <div class="download-wrap" id="downloadWrap">
+          <p class="lead-sub tiny">that's all 100 — here's a copy to keep.</p>
+          <a class="btn-primary" href="100-things-i-like-about-you-nei.pdf" download>Download this little keepsake ♡</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">made with a lot of blue, flowers, and courage ♡</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
